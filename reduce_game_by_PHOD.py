@@ -22,27 +22,21 @@ def find_dominances(game):
 	col_permutations = list(permutations(range(len(game.matrix[0])), 2))
     
 	dominances_dict = {
-		#Uso sets para evitar repeticion de valores:
 		"dominated_rows": [],
 		"dominated_cols": []
 	}
     
 	for r1, r2 in row_permutations:
+		#Esto evita tener que llamar la funcion is_dominat mas de una vez para cada indice de fila.
 		if not r2 in dominances_dict["dominated_rows"]:
 			if is_dominant(game, "row", r1, r2):
-				dominances_dict["dominated_rows"].append(r2)	
-    		#dominances_dict["dominated_rows"].add(r2)
-	#print("---------------------------------------")
+				dominances_dict["dominated_rows"].append(r2)
 	
 	for c1, c2 in col_permutations:
 		if not c2 in dominances_dict["dominated_rows"]: 	
 			if is_dominant(game, "column", c1, c2):
 				dominances_dict["dominated_cols"].append(c2)
-    
-    #Finalmente vuelvo a transformar los sets en listas:
-	dominances_dict["dominated_rows"] = list(dominances_dict["dominated_rows"])
-	dominances_dict["dominated_cols"] = list(dominances_dict["dominated_cols"])
-    
+        
 	return dominances_dict
 
 
