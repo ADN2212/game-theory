@@ -17,15 +17,15 @@ func main () {
 	//Positivo infinito como punto de partida para hallar un valor minimo
 	//inf := math.Inf(1)
 
-	g2 := game.Game{
-		GameName: "2xn Example",
-		RowPlayer: "Nina",
-		ColumnPlayer: "Juan",
-		Matrix: []game.Rose{
-			[]int{-4, 2, 0, 3, -2},
-			[]int{4, -1, 0, -3, 1},
-		},
-	}
+	// g2 := game.Game{
+	// 	GameName: "2xn Example",
+	// 	RowPlayer: "Nina",
+	// 	ColumnPlayer: "Juan",
+	// 	Matrix: []game.Rose{
+	// 		[]int{-4, 2, 0, 3, -2},
+	// 		[]int{4, -1, 0, -3, 1},
+	// 	},
+	// }
 
 	// 	[]int{-4, 2, 0, 3, -2},
 	// []int{4, -1, 0, -3, 1},
@@ -33,22 +33,22 @@ func main () {
 	//fmt.Println(from2xNToNx2(g2))
 
 
-	// g3 := game.Game{
-	// 	GameName: "nx2 Example",
-	// 	RowPlayer: "Manetha",
-	// 	ColumnPlayer: "Henoch",
-	// 	Matrix: []game.Rose{
-	// 		[]int{-3, 5},
-	// 		[]int{-1, 3},
-	// 		[]int{2, -2},
-	// 		[]int{3, -6},
-	// 	},
-	// }
+	g3 := game.Game{
+		GameName: "nx2 Example",
+		RowPlayer: "Manetha",
+		ColumnPlayer: "Henoch",
+		Matrix: []game.Rose{
+			[]int{-3, 5},
+			[]int{-1, 3},
+			[]int{2, -2},
+			[]int{3, -6},
+		},
+	}
 
 	//g2.Show()
 	//fmt.Printf("here.\n")
 
-	gv, err := solve2xnOrnx2Game(g2)
+	gv, err := solve2xnOrnx2Game(g3)
 
 	if err == nil {
 		fmt.Printf("El valor del juego está en %v \n", gv)
@@ -172,40 +172,11 @@ func from2xNToNx2(g game.Game) (game.Game) {
 }
 
 
-//Calcula el valor espera de una estrategia de colin en un punto de interseccion.
-func computeColinExpectedVal(g game.Game, colinIndex int, x float32) float32 {
-	a := float32(g.Matrix[0][colinIndex])
-	b := float32(g.Matrix[1][colinIndex])
-	return a * x + (1.00 - x) * b
-}
-
 //Calcula el valor esperado de una estrategia en un punto de interseccion.
 func computeRoseExpectedVal(rose []int, interSectionPoint float32) float32 {
 	return float32(rose[0]) * (interSectionPoint) + float32(rose[1]) * (1.00 - interSectionPoint)
 }
 
-//Calcula el punto de interseccion entre dos estrategis de colin
-func findExpectedValIntersectionForColin(g game.Game, colinIndexA int, colinIndexB int) (float32, error) {
-	
-	var a1 int = g.Matrix[0][colinIndexA]
-	var b1 int = g.Matrix[1][colinIndexA]
-
-	var a2 int = g.Matrix[0][colinIndexB]
-	var b2 int = g.Matrix[1][colinIndexB]
-
-	numerator := float32(b2 - b1)
-	denominator := float32((a1 - a2) + (b2 - b1))
-
-	if denominator == 0 {
-		return 0.00, fmt.Errorf("Denominador igual a cero.")
-	}
-	
-	//fmt.Printf("Para colinIndexA = %v y colinIndexB = %v. \n", colinIndexA, colinIndexB)
-	//fmt.Println(numerator, denominator)
-
-	return numerator / denominator, nil
-
-}
 
 //Esta funcion encuentra el punto de interseccion entre las ecuaciones de los valores esperados
 //de dos estrategias de Rose de longitud dos.
