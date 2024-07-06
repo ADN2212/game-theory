@@ -27,6 +27,12 @@ func main () {
 		},
 	}
 
+	// 	[]int{-4, 2, 0, 3, -2},
+	// []int{4, -1, 0, -3, 1},
+
+	//fmt.Println(from2xNToNx2(g2))
+
+
 	// g3 := game.Game{
 	// 	GameName: "nx2 Example",
 	// 	RowPlayer: "Manetha",
@@ -47,6 +53,7 @@ func main () {
 	if err == nil {
 		fmt.Printf("El valor del juego está en %v \n", gv)
 	}
+
 }
 
 //Resuleve un jego de la forma 2xn o nx2 usando el metodo de las graficas explicado en la pagina 16.
@@ -57,129 +64,113 @@ func solve2xnOrnx2Game(g game.Game) (point, error) {
 		y: float32(math.Inf(1)),
 	}
 
+	//Transformar el juego si es de la forma 2xn	
+	var is2xn bool = is2xNGame(g)
+
+	if is2xn {
+		//Existe una relacion entre el valor de un juego (V) de la forma 2xn y su version trasformada por la funcion from2xNToNx2,
+		//V(2xn) = -V(nx2), de esta manera me ahorre tener que reacer el algoritmo para juegos de la dorma 2xn. 
+		g = from2xNToNx2(g)
+	} else if !isNx2Game(g) {
+			return gameValuePoint, fmt.Errorf(" Este juego no es de la forma '2xn' ni 'nx2'.")		
+	}
+
 	//En este caso se calculan los varores esperados desde la perspectiva de Rose,
 	//y los potenciales valores del juego son parte del Upper Evelop.
-	if isNx2Game(g) {
-		//Primero generar todas las combinaciones entre las estrategias de Rose.
-		rowCombinations := combin.Combinations(len(g.Matrix), 2)
-		var currentRoseAIndex int
-		var currentRoseBIndex int
+	//Primero generar todas las combinaciones entre las estrategias de Rose.
+	rowCombinations := combin.Combinations(len(g.Matrix), 2)
+	var currentRoseAIndex int
+	var currentRoseBIndex int
 
-		//En este map la llaves son el valor de la coordenada x del punto de interseccion, 
-		//y los valores son el indice de uande las estrategias de Rose
-		//que contienen dicho punto
-		intersectionPointsMap := make(map[float32]int)
-		var currentErr error = nil
-		var currentIntPoint float32
+	//En este map las llaves son el valor de la coordenada x del punto de interseccion, 
+	//y los valores son el indice de una de las estrategias de Rose
+	//que contienen dicho punto:
+	intersectionPointsMap := make(map[float32]int)
+	var currentErr error = nil
+	var currentIntPoint float32
 
-		//Luego caluclar la intersecciones entre las ecuaciones de los valores esperados de rose:
-		for pairIndex := range rowCombinations {
-			currentRoseAIndex = rowCombinations[pairIndex][0]
-			currentRoseBIndex = rowCombinations[pairIndex][1]
-			currentIntPoint, currentErr = findExpectedValIntersection(g.Matrix[currentRoseAIndex], g.Matrix[currentRoseBIndex])
-			if currentErr == nil {
-				intersectionPointsMap[currentIntPoint] = currentRoseAIndex
-			}
+	//Luego caluclar la intersecciones entre las ecuaciones de los valores esperados de rose:
+	for pairIndex := range rowCombinations {
+		currentRoseAIndex = rowCombinations[pairIndex][0]
+		currentRoseBIndex = rowCombinations[pairIndex][1]
+		currentIntPoint, currentErr = findExpectedValIntersection(g.Matrix[currentRoseAIndex], g.Matrix[currentRoseBIndex])
+		if currentErr == nil {
+			intersectionPointsMap[currentIntPoint] = currentRoseAIndex
 		}
-
-		//Despues filtramos por E(Rose J) <= E(Rose A) para toda estrategia J que se intersecte con A		
-		//En este slice isInUpperEvelopPint[x] = true si el punto es parte del Upper Evelop
-		isInUpperEvelop := make(map[float32]bool)
-		var cuurentRoseExpectedval float32;
-		var thisRoseExpectedVal float32;
-
-		for x, roseI := range intersectionPointsMap {			
-			cuurentRoseExpectedval = computeRoseExpectedVal(g.Matrix[roseI], x)
-			isIn := true
-			for _, roseJ := range intersectionPointsMap {
-				thisRoseExpectedVal	= computeRoseExpectedVal(g.Matrix[roseJ], x)
-				if !(thisRoseExpectedVal <= cuurentRoseExpectedval) {
-					isIn = false
-					break
-				}
-			}
-			isInUpperEvelop[x] = isIn
-		}
-		//Finalmente tomar el punto con menor coordenada y (Valor esperado) que sea parte del upper evelop:
-		for x, isInUpperEL := range isInUpperEvelop {
-			if isInUpperEL {
-				roseForThisXPoint := g.Matrix[intersectionPointsMap[x]]
-				expectedVal := computeRoseExpectedVal(roseForThisXPoint, x)
-				if expectedVal < gameValuePoint.y {
-					gameValuePoint.x = x
-					gameValuePoint.y = expectedVal
-				}
-			}
-		}
-		return gameValuePoint, nil
 	}
 
-	//En este caso se buscan los puntos que esten en el lower evelop
-	if is2xNGame(g) {
-		//fmt.Println("... Working ...")
-		gameValuePoint.y = float32(math.Inf(-1))
-		columCombination := combin.Combinations(len(g.Matrix[0]), 2)		
-		//fmt.Println(columCombination)
-		//Siguiendo la misma logica que con Rose
-		intersectionPointsMap := make(map[float32]int)
-		var currentErr error = nil
-		var currentXPoint float32
+	//Despues filtramos por E(Rose J) <= E(Rose A) para toda estrategia J que se intersecte con A		
+	//En este slice isInUpperEvelopPint[x] = true si el punto es parte del Upper Evelop
+	isInUpperEvelop := make(map[float32]bool)
+	var cuurentRoseExpectedval float32;
+	var thisRoseExpectedVal float32;
+	var matrizLen int = len(g.Matrix) 
 
-		for _, pairIndex := range columCombination {
-			currentXPoint, currentErr = findExpectedValIntersectionForColin(g, pairIndex[0], pairIndex[1])
-			//fmt.Println(currentXPoint, currentErr)
-			if currentErr == nil {
-				intersectionPointsMap[currentXPoint] = pairIndex[0]
+	for x, roseI := range intersectionPointsMap {
+		//fmt.Printf("Para Rose %v, con x = %v \n", roseI, x)
+		cuurentRoseExpectedval = computeRoseExpectedVal(g.Matrix[roseI], x)
+		isIn := true
+		//Iterar sobre todas las estrategias para comprobar si cumple con la condicion:
+		for roseJ := 0; roseJ < matrizLen; roseJ++ {			
+			thisRoseExpectedVal	= computeRoseExpectedVal(g.Matrix[roseJ], x)
+			//fmt.Printf("Provando interseccion entre Rose %v y Rose %v.`\n", roseI, roseJ)
+			if !(thisRoseExpectedVal <= cuurentRoseExpectedval) {
+				isIn = false
+				break
 			}
 		}
-
-		//fmt.Println(intersectionPointsMap)
-		//Despues filtramos por E(Colin A) <= E(Colin J) para toda estrategia J que se intersecte con A		
-		//pointsInLowerEvelop := []point{}		
-		
-		//var isInLowerEvelop bool
-		//var currentColinExpectedVal float32
-		//var thisColinExpectedVal float32
-
-
-		// for x, colinAIndex := range intersectionPointsMap {
-
-		// 	isInLowerEvelop = true
-		// 	currentColinExpectedVal = computeColinExpectedVal(g, colinAIndex, x)
-
-		// 	for _, colinBIndex := range intersectionPointsMap {
-		// 		thisRoseExpectedVal := computeColinExpectedVal(g, colinBIndex, x)
-		// 		if !(currentColinExpectedVal <= thisRoseExpectedVal) {
-		// 			isInLowerEvelop = false
-		// 			break
-		// 		}
-		// 	}
-
-		// 	if isInLowerEvelop {
-		// 		pointsInLowerEvelop = append(pointsInLowerEvelop, point{x: x, y: currentColinExpectedVal})
-		// 	}
-
-		colinDOn05 := computeColinExpectedVal(g, 3, 0.5) 
-		colinEOn05 := computeColinExpectedVal(g, 4, 0.5)
-
-		fmt.Println(colinDOn05, colinEOn05)
-
-
-		
-		//}
-
-		//fmt.Println(pointsInLowerEvelop)
-		//Finalmente buscar el punto con al coordenada y mas alta entre los que pertenecen al lower eveloop.
-		// for _, p := range pointsInLowerEvelop {
-		// 	if p.y > gameValuePoint.y {
-		// 		gameValuePoint = p
-		// 	}
+		// if isIn {
+		// 	fmt.Printf("%v esta en el Upper envelop.\n", x)
 		// }
+		isInUpperEvelop[x] = isIn
+	}
 
+	//Finalmente tomar el punto con menor coordenada y (Valor esperado) que sea parte del upper evelop:
+	for x, isInUpperEL := range isInUpperEvelop {
+		if isInUpperEL {
+			roseForThisXPoint := g.Matrix[intersectionPointsMap[x]]
+			expectedVal := computeRoseExpectedVal(roseForThisXPoint, x)
+			if expectedVal < gameValuePoint.y {
+				gameValuePoint.x = x
+				gameValuePoint.y = expectedVal
+			}
+		}
+	}
+	
+	if is2xn {
+		gameValuePoint.y = gameValuePoint.y * (-1)
 		return gameValuePoint, nil
 	}
-	return gameValuePoint, fmt.Errorf(" Este juego no es de la forma '2xn' ni 'nx2'.")
+
+	return gameValuePoint, nil
+
 }
+
+//Esta funcion transforma un juego de la forma 2xN a uno de la forma Nx2
+//Ademas de que cambia los signos de los valores de la matriz.  
+//Asume que su inout es de la forma 2xN
+func from2xNToNx2(g game.Game) (game.Game) {
+	
+	resGame := game.Game{
+		GameName: "Converted Game",
+		RowPlayer: "Rose",
+		ColumnPlayer: "Colin",
+		Matrix: []game.Rose{},
+	}
+
+	var firtsRowLen = len(g.Matrix[0])
+
+	for col := 0; col < firtsRowLen; col++ {
+		resGame.Matrix = append(
+			resGame.Matrix, []int {
+				-1 * g.Matrix[0][col],
+				-1 * g.Matrix[1][col],
+			},
+		)
+	}
+	return resGame
+}
+
 
 //Calcula el valor espera de una estrategia de colin en un punto de interseccion.
 func computeColinExpectedVal(g game.Game, colinIndex int, x float32) float32 {
@@ -212,7 +203,6 @@ func findExpectedValIntersectionForColin(g game.Game, colinIndexA int, colinInde
 	//fmt.Printf("Para colinIndexA = %v y colinIndexB = %v. \n", colinIndexA, colinIndexB)
 	//fmt.Println(numerator, denominator)
 
-
 	return numerator / denominator, nil
 
 }
@@ -241,46 +231,20 @@ func isNx2Game(g game.Game) bool {
 
 //Comprueba si la matriz de un juego es de la forma 2xn
 func is2xNGame(g game.Game) bool {
+
+	matrizLen := len(g.Matrix)
+
+	if matrizLen != 2 {
+		return false
+	}
+
 	var firtsRowLen int = len(g.Matrix[0])
-	matrizLen := len(g.Matrix) 
+	
 	for i := 1; i < matrizLen; i++ {
 		if len(g.Matrix[i]) != firtsRowLen {
 			return false
 		}
 	}
+	
 	return true
-}
-
-//Esta funcion comprueba si un juego es de la forma 2xn o nx2:
-func is2xnOrnx2Game(g game.Game, t string) (bool, error) {
-
-	if t != "2xn" && t != "nx2" {
-		return false, fmt.Errorf("Elija entre '2xn' o 'nx2' para validar la forma del juego")
-	}
-
-	var firtsRowLen int = len(g.Matrix[0])
-	matrizLen := len(g.Matrix) 
-
-	for i := 1; i < matrizLen; i++ {
-		if len(g.Matrix[i]) != firtsRowLen {
-			return false, fmt.Errorf("En este juego hay filas con longitudes diferentes.")
-		}
-	} 
-
-	if t == "2xn" {
-		return matrizLen == 2, nil
-	}
-
-	if t == "nx2" {
-		for rowIndex := range g.Matrix {
-			if len(g.Matrix[rowIndex]) != 2 {
-				return false, nil
-			}
-		}
-	}
-
-	//Originalmente este return iba dentro de la condicional para "nx2" games,
-	//Pero el compilador no permite que la funcion no tenga return fuera de la raiz,
-	//Sin embargo, que este aqui es logicamente equivalente.
-	return true, nil
 }
