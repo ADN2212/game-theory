@@ -69,7 +69,7 @@ func solve2xnOrnx2Game(g game.Game) (point, error) {
 
 	if is2xn {
 		//Existe una relacion entre el valor de un juego (V) de la forma 2xn y su version trasformada por la funcion from2xNToNx2,
-		//V(2xn) = -V(nx2), de esta manera me ahorre tener que reacer el algoritmo para juegos de la dorma 2xn. 
+		//V(2xn) = -V(nx2), de esta manera me ahorre tener que rehacer el algoritmo para juegos de la dorma 2xn. 
 		g = from2xNToNx2(g)
 	} else if !isNx2Game(g) {
 			return gameValuePoint, fmt.Errorf(" Este juego no es de la forma '2xn' ni 'nx2'.")		
@@ -93,7 +93,10 @@ func solve2xnOrnx2Game(g game.Game) (point, error) {
 	for pairIndex := range rowCombinations {
 		currentRoseAIndex = rowCombinations[pairIndex][0]
 		currentRoseBIndex = rowCombinations[pairIndex][1]
-		currentIntPoint, currentErr = findExpectedValIntersection(g.Matrix[currentRoseAIndex], g.Matrix[currentRoseBIndex])
+		currentIntPoint, currentErr = findExpectedValIntersection(
+			g.Matrix[currentRoseAIndex], 
+			g.Matrix[currentRoseBIndex]
+		)
 		if currentErr == nil {
 			intersectionPointsMap[currentIntPoint] = currentRoseAIndex
 		}

@@ -82,6 +82,19 @@ g35c = Game(
     ]
 )
 
+
+w2 = Game(
+    "Missile Game Cap-5, Ex-2",
+    "Blue Country",
+    "Red Country",
+    [
+        [1,1,0,0],
+        [0,1,1,0],
+        [0,0,1,1],
+        [0,0,0,1],
+    ]   
+)
+
 #Esta funcion resive un juego como argumento y se encarga de hallar el valor de sus sadle points y
 #sus posiciones en caso de que existan, retorna un python dict con la informacion antes dicha, el cual
 #estará vacio en caso de no haber sadle points.
@@ -136,4 +149,5 @@ def find_sadle_points(game):
 #print(find_sadle_points(g33a))
 #print(find_sadle_points(g35a))
 #print(find_sadle_points(g35b))
-print(find_sadle_points(g35c))
+#print(find_sadle_points(g35c))
+print(find_sadle_points(w2))

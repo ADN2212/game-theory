@@ -98,6 +98,30 @@ g38 = Game(
 	]
 )
 
+g6_vs_p7 = Game(
+	"6 Guerrillas vs 7 Policias (Ej-1, Cap-5)",
+	"Guerrillas",
+	"Policias",
+	[
+		[0.5, 0.5, 1, 1],
+		[1, 0.5, 0.5, 1],
+		[1, 1, 0.5, 0.5],
+		[1, 1, 1, 0]
+	]
+)
+
+w2 = Game(
+    "Missile Game Cap-5, Ex-2",
+    "Blue Country",
+    "Red Country",
+    [
+        [1,1,0,0],
+        [0,1,1,0],
+        [0,0,1,1],
+        [0,0,0,1],
+    ]   
+)
+
 #Esta funcion encuentra todas las dominancias existentes entre las estrategias de ambos jugadores.
 def find_dominances(game):
     #Pimero hay que generar todas las posibles permutaciones de dos en dos tanto de filas como de columnas:
@@ -113,13 +137,16 @@ def find_dominances(game):
 		#Esto evita tener que llamar la funcion is_dominat mas de una vez para cada indice de fila.
 		if not r2 in dominances_dict["dominated_rows"]:
 			if is_dominant(game, "row", r1, r2):
+				#print(f"Rose {r1} domina a Rose {r2}.")
 				dominances_dict["dominated_rows"].append(r2)
 	
 	for c1, c2 in col_permutations:
 		if not c2 in dominances_dict["dominated_rows"]: 	
 			if is_dominant(game, "column", c1, c2):
+				#print(f"Colin {c1} domina a Colin {c2}.")
 				dominances_dict["dominated_cols"].append(c2)
-        
+  
+	print(dominances_dict)      
 	return dominances_dict
 
 
@@ -131,7 +158,7 @@ def reduce(game):
 		game.name += " reduced by PHOD" 
 		return game
     
-    #De lo contrario creamos uno nuevo que no tendra las estrategias dominadas    
+   #De lo contrario creamos uno nuevo que no tendra las estrategias dominadas    
 	reduced_game = Game(
 		game.name,
 		game.row_name,
@@ -150,6 +177,7 @@ def reduce(game):
 					row_to_add.append(game_matrix[r][c])
 			reduced_game.matrix.append(row_to_add)
 	
+	print(reduced_game)
 	#se repite el proceso en forma recursiva:
 	return reduce(reduced_game)
 
@@ -160,4 +188,6 @@ def reduce(game):
 #print(reduce(tg34))
 #print(reduce(g34))
 #print(reduce(g37))
-print(reduce(g38))
+#print(reduce(g38))
+#print(reduce(g6_vs_p7))
+print(reduce(w2))
