@@ -179,7 +179,7 @@ def reduce(game):
 	
 	print(reduced_game)
 	#se repite el proceso en forma recursiva:
-	return reduce(reduced_game)
+	return reduce(reduced_game)#look, this is tail recursion!!
 
 #print(reduce(g21))
 #print(reduce(gif))
