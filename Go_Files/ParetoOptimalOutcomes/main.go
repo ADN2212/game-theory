@@ -20,7 +20,7 @@ type Game []Strategy
 //Tambien puede verse coo O((R * C )^2) siendo R y C la cantidad de estrategias de Rose y Colin respectivamente
 //Note that, this is just a burte force algorithm
 //Este algoritmo se puede mejorar ????
-func (g *Game) findParatoOptimalOutComes() []OutcomePair {
+func (g *Game) findParetoOptimalOutComes() []OutcomePair {
 	//En pagina 68 de define un Pareto Optimal outcome como uno tal que,
 	//En todo el juego no hay otro outcome que le de a ambos jugadores payoffs mayores o que,
 	//le de a uno de los jugadores un paoff igual y al otro uno mayor.
@@ -60,7 +60,7 @@ func main() {
 		{{3, 3}, {-1, 5}},
 		{{5, -1}, {0, 0}},
 	}
-	for _, po := range gamme11Dot4.findParatoOptimalOutComes() {
+	for _, po := range gamme11Dot4.findParetoOptimalOutComes() {
 		fmt.Println(po)
 	}
 
@@ -70,7 +70,7 @@ func main() {
 		{{1, 1}, {2, 5}},
 		{{5, 2}, {-1, -1}},
 	}
-	for _, po := range gamme11Dot3.findParatoOptimalOutComes() {
+	for _, po := range gamme11Dot3.findParetoOptimalOutComes() {
 		fmt.Println(po)
 	}
 }
