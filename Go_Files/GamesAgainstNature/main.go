@@ -25,7 +25,6 @@ type methodsResults struct {
 	savage  result
 }
 
-
 func main() {
 	//ver pagina 59
 	gameOneCap10 := game{
@@ -39,7 +38,7 @@ func main() {
 			{1,3,0,0},
 		},
 	}
-	
+
 	//ver pagina 61
 	gameOfExerciseOneCap10 := game{
 		rowName: "Manager",
