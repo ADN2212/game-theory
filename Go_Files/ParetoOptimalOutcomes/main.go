@@ -70,7 +70,22 @@ func main() {
 		{{1, 1}, {2, 5}},
 		{{5, 2}, {-1, -1}},
 	}
+
 	for _, po := range gamme11Dot3.findParetoOptimalOutComes() {
 		fmt.Println(po)
 	}
+
+	fmt.Println("For Game 11.5")
+	//Notece como en este juego los dos Nash Equilibrium son Pareto-Optimal
+	gamme11Dot5 := Game{
+		{{0, -1}, {0, 2}, {2, 3}},
+		{{0, 0}, {2, 1}, {1, -1}},
+		{{2, 2}, {1, 4}, {1, -1}},
+	}
+
+	for _, po := range gamme11Dot5.findParetoOptimalOutComes() {
+		fmt.Println(po)
+	}
+
+
 }
