@@ -4,22 +4,22 @@ import (
 	"fmt"
 )
 
-//En un non-zero-sum game cada casilla de la matiz del juego es un par ordenado con el outcome de cada jugador
+// En un non-zero-sum game cada casilla de la matiz del juego es un par ordenado con el outcome de cada jugador
 type OutcomePair struct {
-	Rose int
+	Rose  int
 	Colin int
 }
 
-//again, una strategia no es mas que un arreglog de outcomes
+// again, una strategia no es mas que un arreglog de outcomes
 type Strategy []OutcomePair
 
-//y un juego no es mas que un arreglo de 
+// y un juego no es mas que un arreglo de
 type Game []Strategy
 
-//This is O(n^2) donde n es igual al numero de outcomes en el juego.
-//Tambien puede verse coo O((R * C )^2) siendo R y C la cantidad de estrategias de Rose y Colin respectivamente
-//Note that, this is just a burte force algorithm
-//Este algoritmo se puede mejorar ????
+// This is O(n^2) donde n es igual al numero de outcomes en el juego.
+// Tambien puede verse coo O((R * C )^2) siendo r y c la cantidad de estrategias de Rose y Colin respectivamente
+// Note that, this is just a burte force algorithm
+// Este algoritmo se puede mejorar ????
 func (g *Game) findParetoOptimalOutComes() []OutcomePair {
 	//En pagina 68 de define un Pareto Optimal outcome como uno tal que,
 	//En todo el juego no hay otro outcome que le de a ambos jugadores payoffs mayores o que,
@@ -49,7 +49,22 @@ func (g *Game) findParetoOptimalOutComes() []OutcomePair {
 	}
 	return paretoOptimalOutcomes
 }
- 
+
+// Esta funcion resive outcome pair y determina si es Pareto Optimal
+// Su time complexity es O(n) donde n es la cantidad de outcomes del juego,
+// siendo n = r * c,  then O(n) = O(r * c) osea,
+// que la time complexity tambien esta determinada por el producto de las filas y columnas del juego
+func (g *Game) isParetoOptimal(pair OutcomePair) bool {
+	for _, s := range *g {
+		for _, gamePair := range s {
+			if (gamePair.Rose > pair.Rose && gamePair.Colin > pair.Colin) || (gamePair.Rose == pair.Rose && gamePair.Colin > pair.Colin || gamePair.Colin == pair.Colin && gamePair.Rose > pair.Rose) {
+				return false
+			}
+		}
+	}
+	return true
+}
+
 func main() {
 	fmt.Println("Finding Pareto Optimal Pairs: ")
 	fmt.Println("For Game 11.4")
@@ -85,6 +100,34 @@ func main() {
 
 	for _, po := range gamme11Dot5.findParetoOptimalOutComes() {
 		fmt.Println(po)
+	}
+
+	fmt.Println("For Game C in page 72")
+	gameConPage72 := Game{
+		{{3, 0}, {5, 2}, {0, 5}},
+		{{2, 2}, {1, 1}, {3, 3}},
+		{{4, 1}, {4, 0}, {1, 0}},
+	}
+
+	for _, po := range gameConPage72.findParetoOptimalOutComes() {
+		fmt.Println(po)
+	}
+
+
+	fmt.Println("Provando si un punto es Pareto Optimal dentro de un juego: ")
+	test1 := OutcomePair{3,3}
+	if gamme11Dot3.isParetoOptimal(test1) {
+		fmt.Println(test1, "is pareto optimal in Game 11.3")
+	}
+
+	test2 := OutcomePair{2,5}
+	if gamme11Dot5.isParetoOptimal(test2) {
+		fmt.Println(test2, "is pareto optimal in Game 11.5")
+	}
+
+	test3 := OutcomePair{1,1}
+	if !gameConPage72.isParetoOptimal(test3) {
+		fmt.Println(test3, "is not pareto optimal in Game on page 72")
 	}
 
 
