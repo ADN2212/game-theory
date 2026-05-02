@@ -113,6 +113,15 @@ func main() {
 		fmt.Println(po)
 	}
 
+	fmt.Println("For Last Game in cap 11")
+	lastGameOfCap11 := Game{
+		{{0, 1}, {0, 1}, {2, 4}},
+		{{5, 1}, {4, 2}, {1, 0}},
+		{{4, 3}, {1, 4}, {1, 0}},
+	}
+	for _, po := range lastGameOfCap11.findParetoOptimalOutComes() {
+		fmt.Println(po)
+	}
 
 	fmt.Println("Provando si un punto es Pareto Optimal dentro de un juego: ")
 	test1 := OutcomePair{3,3}

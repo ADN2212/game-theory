@@ -138,4 +138,13 @@ func main() {
 	fmt.Println("Equilibrios de Nash en el juego 11.5: ")
 	fmt.Println(gamme11Dot5.searchPureNashEquilibria())
 
+	lastGameOfCap11 := Game{
+		{{0, 1}, {0, 1}, {2, 4}},
+		{{5, 1}, {4, 2}, {1, 0}},
+		{{4, 3}, {1, 4}, {1, 0}},
+	}
+
+	fmt.Println("Equilibrios de Nash en el juego del ejercicio 4: ")
+	fmt.Println(lastGameOfCap11.searchPureNashEquilibria())
+
 }
