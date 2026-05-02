@@ -1,4 +1,4 @@
-## Game Theory Notes
+## Anotaciones de **Teoría de Juegos**
 
 En este repositorio iré publicando los algoritmos y ejercicios que desarrolle durante mi estudio de **Teoría de Juegos**, basados en el libro [*Game Theory and Strategy*](http://www.ams.org/books/nml/036/nml036-endmatter.pdf) de **Philip D. Straffin**.
 
