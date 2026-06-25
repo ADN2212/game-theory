@@ -2,16 +2,16 @@ package main
 
 import "fmt"
 
-// En un non-zero-sum game cada casilla de la matiz del juego es un par ordenado con el outcome de cada jugador
+// En un non-zero-sum game cada casilla de la matriz del juego es un par ordenado con el outcome de cada jugador
 type OutcomePair struct {
 	Rose  int
 	Colin int
 }
 
-// again, una strategia no es mas que un arreglog de outcomes
+// again, una strategia no es mas que un arreglo de outcomes
 type Strategy []OutcomePair
 
-// y un juego no es mas que un arreglo de
+// y un juego no es mas que un arreglo de estrategias, en este caso, una matriz de OutcomePairs
 type Game []Strategy
 
 type Node struct {
@@ -19,23 +19,23 @@ type Node struct {
 	outEdges int
 }
 
-type Posotion struct {
+type Position struct {
 	row int
 	col int
 }
 
-func (p *Posotion) isValid(maxRow, maxCol int) bool {
+func (p *Position) isValid(maxRow, maxCol int) bool {
 	return (p.row >= 0 && p.row <= maxRow) && (p.col >= 0 && p.col <= maxCol)
 }
 
 
 //Este algoritmo se basa en la idea de los diagramas de flujo que se muestan en el cap 11
-//Como se puede ver en esto ningun outcome que sea un Nash Equilibrium tiene flechas que apunten hacia afuera,
+//Como se puede ver en estos ningun outcome que sea un Nash Equilibrium tiene flechas que apunten hacia afuera,
 //por lo que, si se crea un grafo en base a la matriz del juego, los nodos que no tengan aristas salientes seran los N.E
 func (g *Game) searchPureNashEquilibria() []OutcomePair {
 
 	//Primero creamos la grilla de nodos
-	//Esta grilla en un grafo dirigido en el cual cada nodo respresanta un outcome de la matriz del juego
+	//Esta grilla es un grafo dirigido en el cual cada nodo respresanta un outcome de la matriz del juego
 	var grid [][]Node
 	for _, strategy := range *g {
 		row := []Node{}
@@ -56,32 +56,32 @@ func (g *Game) searchPureNashEquilibria() []OutcomePair {
 	for r, row := range grid {
 		for c := range row {
 			node := &grid[r][c] //Si no uso un puntero aqui no podre modificar el nodo original.
-			north := Posotion{row: r - 1, col: c}
+			north := Position{row: r - 1, col: c}
 			if north.isValid(maxI, maxJ) {
 				northNode := grid[north.row][north.col]
-				//Sean (a, b) y (c, d) dos nodos contigues en la grilla
-				//existe la arista vertical (a, b) -> (c, d) si a <= c
+				//Sean (a, b) y (c, d) dos nodos contiguos en la grilla
+				//existe la arista "vertical" (a, b) -> (c, d) si a <= c
 				if node.pair.Rose <= northNode.pair.Rose {
 					node.outEdges += 1
 				}
 			}
-			east := Posotion{row: r, col: c + 1}
+			east := Position{row: r, col: c + 1}
 			if east.isValid(maxI, maxJ) {
 				esatNode := grid[east.row][east.col]
-				//Sean (a, b) y (c, d) dos nodos contigues en la grilla
-				//existe la arista horizontal (a, b) -> (c, d) si b <= d
+				//Sean (a, b) y (c, d) dos nodos contiguos en la grilla
+				//existe la arista "horizontal" (a, b) -> (c, d) si b <= d
 				if node.pair.Colin <= esatNode.pair.Colin {
 					node.outEdges += 1
 				}
 			}
-			south := Posotion{row:r + 1, col: c}
+			south := Position{row:r + 1, col: c}
 			if south.isValid(maxI, maxJ) {
 				southNode := grid[south.row][south.col]
 				if node.pair.Rose <= southNode.pair.Rose {
 					node.outEdges += 1
 				}
 			}
-			west := Posotion{row: r, col: c - 1}
+			west := Position{row: r, col: c - 1}
 			if west.isValid(maxI, maxJ) {
 				westNode := grid[west.row][west.col]
 				if node.pair.Colin <= westNode.pair.Colin {
