@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-// En un non-zero-sum game cada casilla de la matiz del juego es un par ordenado con el outcome de cada jugador
+// En un non-zero-sum game cada casilla de la matriz del juego es un par ordenado con el outcome de cada jugador
 type OutcomePair struct {
 	Rose  int
 	Colin int
@@ -21,7 +21,7 @@ type Game []Strategy
 // Note that, this is just a burte force algorithm
 // Este algoritmo se puede mejorar ????
 func (g *Game) findParetoOptimalOutComes() []OutcomePair {
-	//En pagina 68 de define un Pareto Optimal outcome como uno tal que,
+	//En pagina 68 se define un Pareto Optimal outcome como uno tal que,
 	//En todo el juego no hay otro outcome que le de a ambos jugadores payoffs mayores o que,
 	//le de a uno de los jugadores un paoff igual y al otro uno mayor.
 	var allGameOutcomes []OutcomePair
@@ -32,7 +32,7 @@ func (g *Game) findParetoOptimalOutComes() []OutcomePair {
 		}
 	}
 	var paretoOptimalOutcomes []OutcomePair
-	//Luego, por cada outcome revisamos que compla con las codiciones para ser Pareto Optimal
+	//Luego, por cada outcome revisamos que cumpla con las condiciones para ser Pareto Optimal
 	for _, currentPair := range allGameOutcomes {
 		//Asumimos que todo par es pareto optimal desde el pricipio
 		currentPairIsParetoOptimal := true
@@ -124,20 +124,19 @@ func main() {
 	}
 
 	fmt.Println("Provando si un punto es Pareto Optimal dentro de un juego: ")
-	test1 := OutcomePair{3,3}
+	test1 := OutcomePair{3, 3}
 	if gamme11Dot3.isParetoOptimal(test1) {
 		fmt.Println(test1, "is pareto optimal in Game 11.3")
 	}
 
-	test2 := OutcomePair{2,5}
+	test2 := OutcomePair{2, 5}
 	if gamme11Dot5.isParetoOptimal(test2) {
 		fmt.Println(test2, "is pareto optimal in Game 11.5")
 	}
 
-	test3 := OutcomePair{1,1}
+	test3 := OutcomePair{1, 1}
 	if !gameConPage72.isParetoOptimal(test3) {
 		fmt.Println(test3, "is not pareto optimal in Game on page 72")
 	}
-
 
 }

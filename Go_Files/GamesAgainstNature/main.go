@@ -195,4 +195,3 @@ func (g *game) rowWeightedAverage(optimismCoefficient float64, rowIndex int) flo
 	rowMin := g.rowMin(rowIndex)
 	return optimismCoefficient * rowMax + (1 - optimismCoefficient) * rowMin
 }
-
